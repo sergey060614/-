@@ -1,81 +1,25 @@
-import Validator from '../app';
+import Validator from "../app";
 
-test('Проверка на совпадение шаблона - success', () => {
-  const name = "a123_adc-b"; 
-  const validator = new Validator();
-  const validateNameStatus = validator.validateUsername(name);  
+const validator = new Validator();
 
-  expect(validateNameStatus).toBeTruthy();
-});
+const usernameTestCases = [
+  ["Валидное имя с буквами, цифрами, _ и -", "a123_adc-b", true],
 
-test("Проверка на число в начале строки - fail", () => {
-  const name = "1abc";
-  const validator = new Validator();
-  const validateNameStatus = validator.validateUsername(name);
+  ["Число в начале строки", "1abc", false],
+  ["Число в конце строки", "abc1", false],
+  ["_ в начале строки", "_abc", false],
+  ["_ в конце строки", "abc_", false],
+  ["- в начале строки", "-abc", false],
+  ["- в конце строки", "abc-", false],
+  ["Четыре цифры в строке", "a1234c", false],
+  ["Недопустимый символ !", "a134jk!jc", false],
+  ["Недопустимый символ кириллицы", "a12ц34c", false]
+];
 
-  expect(validateNameStatus).toBeFalsy();
-});
-
-test("Проверка на число в конце строки - fail", () => {
-  const name = "abc1";
-  const validator = new Validator();
-  const validateNameStatus = validator.validateUsername(name);
-
-  expect(validateNameStatus).toBeFalsy();
-});
-
-test("Проверка на '_' в начале строки - fail", () => {
-  const name = "_abc";
-  const validator = new Validator();
-  const validateNameStatus = validator.validateUsername(name);
-
-  expect(validateNameStatus).toBeFalsy();
-});
-
-test("Проверка на '_' в конце строки - fail", () => {
-  const name = "abc_";
-  const validator = new Validator();
-  const validateNameStatus = validator.validateUsername(name);
-
-  expect(validateNameStatus).toBeFalsy();
-});
-
-test("Проверка на '-' в начале строки - fail", () => {
-  const name = "-abc";
-  const validator = new Validator();
-  const validateNameStatus = validator.validateUsername(name);
-
-  expect(validateNameStatus).toBeFalsy();
-});
-
-test("Проверка на '-' в конце строки - fail", () => {
-  const name = "abc-";
-  const validator = new Validator();
-  const validateNameStatus = validator.validateUsername(name);
-
-  expect(validateNameStatus).toBeFalsy();
-});
-
-test("Проверка на четыре цифры в строке - fail", () => {
-  const name = "a1234c";
-  const validator = new Validator();
-  const validateNameStatus = validator.validateUsername(name);
-
-  expect(validateNameStatus).toBeFalsy();
-});
-
-test("Проверка на недопустимый символ '!' в строке - fail", () => {
-  const name = "a134jk!jc";
-  const validator = new Validator();
-  const validateNameStatus = validator.validateUsername(name);
-
-  expect(validateNameStatus).toBeFalsy();
-});
-
-test("Проверка на недопустимый символ 'ц' в строке - fail", () => {
-  const name = "a12ц34c";
-  const validator = new Validator();
-  const validateNameStatus = validator.validateUsername(name);
-
-  expect(validateNameStatus).toBeFalsy();
-});
+test.each(usernameTestCases)(
+  '%s: для имени "%s" результат должен быть %s',
+  (description, name, expectedResult) => {
+    const validateNameStatus = validator.validateUsername(name);
+    expect(validateNameStatus).toBe(expectedResult);
+  }
+);
